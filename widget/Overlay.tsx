@@ -13,11 +13,20 @@ import visible from "../visible"
 function Battery() {
     const battery = AstalBattery.get_default()
     const powerprofiles = AstalPowerProfiles.get_default()
-    
-    const percent = createBinding(
+
+    const percent_decimal = createBinding(
         battery,
         "percentage",
     )
+
+    // this is probably not the shortest way to make percent reactive but it works
+    const toPercent = (decimal: number) => { return `${Math.floor(decimal * 100)}%` }
+    const [percent, setPercent] = createState(toPercent(percent_decimal.get()))
+    percent_decimal.subscribe(() => {
+        setPercent(toPercent(percent_decimal.get()))
+    })
+
+
 
     /*     let p = 1
         let red = Math.floor(255 * (1 - p) * 0.8);
@@ -35,9 +44,7 @@ function Battery() {
 
     // This is the core logic. It runs whenever 'percent' changes.
     function update_color() {
-        const p = percent.get() // p is a value from 0.0 to 1.0
-
-        // Calculate the red and green components
+        const p = percent_decimal.get()
         const red = Math.floor(255 * (1 - p) * 0.8);
         const green = Math.floor(255 * p * 0.8);
         const blue = 0;
@@ -45,20 +52,17 @@ function Battery() {
         app.apply_css(`.Levelbar trough block {
                                 background-color: rgb(${red}, ${green}, ${blue});
                                 }`)
-
     }
     update_color()
-    percent.subscribe(update_color)
+    percent_decimal.subscribe(update_color)
     return (
         <box>
             <levelbar
                 class="Levelbar"
-                value={percent}
+                value={percent_decimal}
                 valign={Gtk.Align.CENTER}
-            // The 'setup' prop is perfect for one-time initialization
-
             >
-                <label label={`${Math.floor(percent.get() * 100)}%`} />
+                <label label={percent} />
 
             </levelbar>
 
@@ -68,11 +72,9 @@ function Battery() {
 
 export default function Overlay(gdkmonitor: Gdk.Monitor) {
     const time = createPoll("", 1000, "date")
-    const { TOP, LEFT, RIGHT } = Astal.WindowAnchor
-
     const [visibility, setVisibility] = createState(true)
 
-    visible.connect("toggle_visibility", ()=>{ 
+    visible.connect("toggle_visibility", () => {
         // make the revealer change it value to what it currently isn't.
         setVisibility(!visibility.get())
     })
@@ -90,7 +92,7 @@ export default function Overlay(gdkmonitor: Gdk.Monitor) {
         >
             <revealer
                 transitionType={Gtk.RevealerTransitionType.CROSSFADE}
-                
+
                 revealChild={
                     // change this value upon recieving the above signal
                     visibility
@@ -107,8 +109,6 @@ export default function Overlay(gdkmonitor: Gdk.Monitor) {
                     <Gtk.Calendar />
                 </Gtk.Grid>
             </revealer>
-
-
         </window>
     )
 }
