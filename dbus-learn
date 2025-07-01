@@ -1,0 +1,28 @@
+
+there is the user's Service Manager "user@1000.service" which has its own instance of systemd
+directly under there is session.slice which is a bad name because it has nothing to do with sessions.
+and directly under that there is dbus.service which is the USER dbus instance
+It is not a USER session dbus instance that does not exist.
+
+
+# Dbus-service
+xdg-desktop-portal is implemented as a D-Bus service
+The D-Bus service name for this is org.freedesktop.portal.Desktop
+upower does also have a D-Bus with service name org.freedesktop.UPower
+
+These names are like static ip address. any D-Bus client can easily find a D-Bus service
+
+# Dbus-service objects
+A D-Bus service exposes one or more objects, each identified by a unique object path, which looks like a filesystem path (e.g., /org/freedesktop/UPower/devices/DisplayDevice).
+They are logical entities that represent a resource or component provided by the service. For example, the UPower service has objects for each battery, AC adapter, and other power-related devices. 
+
+
+An application wants to open a file picker. which it can't on it own. It sends a message to the dbus service xdg-desktop-portal
+The specific interface is org.freedesktop.portal.FileChooser.
+
+opening file picker in vscode:
+   string "type='signal', sender='org.freedesktop.portal.Desktop', interface='org.freedesktop.portal.Request', path='/org/freedesktop/portal/desktop/request/1_46/750FDF5490DB39962D9751A39FFDDD5C'"
+
+
+From my perspective as some not in a sandboxed environment portals are needed for apps to function.
+"Portals originated from the Flatpak project, but are now a common Linux desktop standard with support from GNOME, KDE and Snapcraft. They are even used outside of sandboxes to provide a standardised API to common desktop features such as screenshots and screen casts on wayland."
