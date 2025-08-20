@@ -1,7 +1,6 @@
 import app from "ags/gtk4/app"
 import style from "./style.scss"
 import Overlay from "./widget/Overlay"
-
 import visible from "./visible"
 
 app.start({

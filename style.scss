@@ -4,6 +4,8 @@ $bg-color: #{"@theme_bg_color"};
 $theme_base_color : #{"@theme_base_color"};
 $theme_text_color : #{"@theme_text_color"};
 
+
+
 window {
   background: none;
 
@@ -11,17 +13,23 @@ window {
     background: none;
 
     grid {
+
+
+
       >* {
         margin: 10px;
         border-radius: 5%;
         background: $bg-color;
       }
 
-      .Levelbar {}
-
-
     }
 
 
   }
 }
+
+      #Battery {
+        min-width: 1000px;
+        min-height: 300px;
+        background-color: red;
+      }
